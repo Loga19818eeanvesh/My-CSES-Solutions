@@ -1,0 +1,110 @@
+//
+//  main.cpp
+//  shortestroads
+//
+//  Created by Logas81855anvesh on 07/02/21.
+//
+ 
+#include <iostream>
+#include <vector>
+using namespace std;
+struct node{
+    int v;
+    int w;
+};
+class graph{
+private:
+    vector<int> v;
+    vector<vector<node>> e;
+    vector <node> q;
+public:
+    void addvertex(int u){
+        v.push_back(u);
+    }
+    void initialise(){
+        e.resize(v.size());
+    }
+    void addedges(int a,int b,int c){
+        node n1={b-1,c};
+        node n2={a-1,c};
+        e[a-1].push_back(n1);
+        e[b-1].push_back(n2);
+    }
+    void addq(int a,int b){
+        node n={a-1,b-1};
+        q.push_back(n);
+    }
+    void aps(){
+        long long d1[v.size()][v.size()];
+        int p[v.size()][v.size()];
+        for(int i=0;i<v.size();i++){
+            for(int j=0;j<v.size();j++){
+                d1[i][j]=1000000000000000;
+                p[i][j]=-1;
+            }
+        }
+        for(int i=0;i<v.size();i++){
+            for(int j=0;j<e[i].size();j++){
+                if(e[i][j].w<d1[i][e[i][j].v]){d1[i][e[i][j].v]=e[i][j].w;}
+                p[i][e[i][j].v]=i;
+            }
+        }
+        for(int i=0;i<v.size();i++){d1[i][i]=0;}
+        long long d2[v.size()][v.size()];
+        for(int i=0;i<v.size();i++){
+            for(int j=0;j<v.size();j++){
+                d2[i][j]=d1[i][j];
+            }
+        }
+        for(int k=0;k<v.size();k++){
+            for(int i=0;i<v.size();i++){
+                for(int j=0;j<v.size();j++){
+                    if(d1[i][k]+d1[k][j]<d1[i][j]){
+                        d2[i][j]=d1[i][k]+d1[k][j];
+                        p[i][j]=k;
+                    }
+                }
+            }
+            for(int i=0;i<v.size();i++){
+                for(int j=0;j<v.size();j++){
+                    d1[i][j]=d2[i][j];
+                }
+            }
+        }
+        for(int i=0;i<q.size();i++){
+            if(d1[q[i].v][q[i].w]!=1000000000000000){
+                cout<<d1[q[i].v][q[i].w]<<endl;
+            }
+            else{
+                cout<<"-1"<<endl;
+            }
+        }
+    }
+};
+int main( ) {
+    int n;
+    int m;
+    int q;
+    cin>>n;
+    cin>>m;
+    cin>>q;
+    graph g;
+    for(int i=1;i<=n;i++){
+        g.addvertex(i);
+    }
+    g.initialise();
+    int a;int b;int c;
+    for(int i=0;i<m;i++){
+        cin>>a;
+        cin>>b;
+        cin>>c;
+        g.addedges(a, b, c);
+    }
+    for(int i=0;i<q;i++){
+        cin>>a;
+        cin>>b;
+        g.addq(a, b);
+    }
+    g.aps();
+    return 0;
+}
