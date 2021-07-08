@@ -1,0 +1,108 @@
+//  main.cpp
+//  flightroutescheck
+//
+//  Created by Logas81855anvesh on 14/02/21.
+//
+ 
+#include <iostream>
+#include <vector>
+using namespace std;
+class graph{
+private:
+    vector<int> v;
+    vector<vector<int>> e;
+    vector<vector<int>> e1;
+public:
+    void addvertex(int i){
+        v.push_back(i);
+    }
+    void initialise(){
+        e.resize(v.size());
+    }
+    void addedges(int a, int b){
+        e[a-1].push_back(b-1);
+    }
+    void dfs_visit(char *c,int i){
+        for(int j=0;j<e[i].size();j++){
+            if(c[e[i][j]]=='w'){
+                c[e[i][j]]='g';
+                dfs_visit(c, e[i][j]);
+            }
+        }
+    }
+    void dfs_visit1(char* c,int i){
+        for(int j=0;j<e1[i].size();j++){
+            if(c[e1[i][j]]=='w'){
+                c[e1[i][j]]='g';
+                dfs_visit1(c, e1[i][j]);
+            }
+        }
+    }
+    void dfs(){
+        int f=0;
+        int a[2];
+        char c[v.size()];
+        for(int i=0;i<v.size();i++){
+            c[i]='w';
+        }
+        for(int i=0;i<v.size();i++){
+            if(c[i]=='w'){
+                a[f]=i;
+                f++;
+                if(f==2){
+                    cout<<"NO"<<endl;
+                    cout<<a[0]+1<<" "<<a[1]+1<<endl;
+                    return;
+                }
+                c[i]='g';
+                dfs_visit(c,i);
+            }
+        }
+        e1.resize(v.size());
+        for(int i=0;i<v.size();i++){
+            for(int j=0;j<e[i].size();j++){
+                e1[e[i][j]].push_back(i);
+            }
+        }
+        int f1=0;
+        int a1[2];
+        char c1[v.size()];
+        for(int i=0;i<v.size();i++){
+            c1[i]='w';
+        }
+        for(int i=0;i<v.size();i++){
+            if(c1[i]=='w'){
+                a1[f1]=i;
+                f1++;
+                if(f1==2){
+                    cout<<"NO"<<endl;
+                    cout<<a1[1]+1<<" "<<a1[0]+1<<endl;
+                    return;
+                }
+                c1[i]='g';
+                dfs_visit1(c1,i);
+            }
+        }
+        cout<<"YES"<<endl;
+    }
+};
+int main( ) {
+    int n;
+    int m;
+    cin>>n;
+    cin>>m;
+    graph g;
+    for(int i=1;i<=n;i++){
+        g.addvertex(i);
+    }
+    g.initialise();
+    int a;
+    int b;
+    for(int i=0;i<m;i++){
+        cin>>a;
+        cin>>b;
+        g.addedges(a, b);
+    }
+    g.dfs();
+    return 0;
+}
