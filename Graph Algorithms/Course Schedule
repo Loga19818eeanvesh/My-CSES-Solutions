@@ -1,0 +1,78 @@
+//
+//  main.cpp
+//  courseschedule
+//
+//  Created by Logas81855anvesh on 11/02/21.
+//
+ 
+#include <iostream>
+#include <vector>
+using namespace std;
+class graph{
+private:
+    vector<int> v;
+    vector<vector<int>> e;
+    vector<int> t;
+public:
+    void addvertex(int i){
+        v.push_back(i);
+    }
+    void initialise(){
+        e.resize(v.size());
+    }
+    void addedges(int a,int b){
+        e[a-1].push_back(b-1);
+    }
+    void visit(int i,char* c){
+        for(int j=0;j<e[i].size();j++){
+            if(c[e[i][j]]=='w'){
+                c[e[i][j]]='g';
+                visit(e[i][j], c);
+            }
+            else if(c[e[i][j]]=='g'){
+                cout<<"IMPOSSIBLE"<<endl;
+                exit(0);
+            }
+        }
+        t.push_back(i);
+        c[i]='b';
+    }
+    void topological_sort(){
+        int p[v.size()];
+        char c[v.size()];
+        for(int i=0;i<v.size();i++){
+            c[i]='w';
+            p[i]=-1;
+        }
+        for(int i=0;i<v.size();i++){
+            if(c[i]=='w'){
+                c[i]='g';
+                visit(i,c);
+            }
+        }
+        for(int i=t.size()-1;i>=0;i--){
+            cout<<t[i]+1<<" ";
+        }
+        cout<<endl;
+    }
+};
+int main() {
+    int n;
+    int m;
+    cin>>n;
+    cin>>m;
+    graph g;
+    for(int i=1;i<=n;i++){
+        g.addvertex(i);
+    }
+    g.initialise();
+    int a;
+    int b;
+    for(int i=0;i<m;i++){
+        cin>>a;
+        cin>>b;
+        g.addedges(a, b);
+    }
+    g.topological_sort();
+    return 0;
+}
