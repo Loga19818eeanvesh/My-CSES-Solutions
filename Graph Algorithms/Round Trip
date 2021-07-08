@@ -1,0 +1,87 @@
+//
+//  main.cpp
+//  roundtrip
+//
+//  Created by Logas81855anvesh on 06/02/21.
+//
+ 
+#include <iostream>
+#include <vector>
+using namespace std;
+class graph{
+private:
+    vector<int> v;
+    vector<vector<int>> e;
+    vector <int > cy;
+public:
+    void addvertex(int i){
+        v.push_back(i);
+    }
+    void initialise(){
+        e.resize(v.size());
+    }
+    void addedges(int u1,int u2){
+        e[u1-1].push_back(u2-1);
+        e[u2-1].push_back(u1-1);
+    }
+    void print_path(int* p,int a,int b){
+        if(a==b){return;}
+        print_path(p,a,p[b]);
+        cy.push_back(p[b]);
+        return;
+    }
+    void cycle_visit(int i,int* p,char* c){
+        for(int j=0;j<e[i].size();j++){
+            if(c[e[i][j]]=='w'){
+                c[e[i][j]]='g';
+                p[e[i][j]]=i;
+                cycle_visit(e[i][j], p, c);
+            }
+            else if(c[e[i][j]]=='g' && e[i][j]!=p[i]){
+                cy.push_back(i);
+                print_path(p,e[i][j],i);
+                cout<<cy.size()+1<<endl;
+                for(int k=0;k<cy.size();k++){
+                    cout<<cy[k]+1<<" ";
+                }
+                cout<<cy[0]+1<<endl;
+                exit(0);
+            }
+        }
+    }
+    void cycle_detection(){
+        char c[v.size()];
+        int p[v.size()];
+        for(int i=0;i<v.size();i++){
+            c[i]='w';
+            p[i]=-1;
+        }
+        for(int i=0;i<v.size();i++){
+            if(c[i]=='w'){
+                c[i]='g';
+                cycle_visit(i, p, c);
+            }
+        }
+        cout<<"IMPOSSIBLE";
+    }
+ 
+};
+int main( ) {
+    int n;
+    int m;
+    cin>>n;
+    cin>>m;
+    int v1;
+    int v2;
+    graph g;
+    for(int i=1;i<=n;i++){
+        g.addvertex(i);
+    }
+    g.initialise();
+    for(int i=0;i<m;i++){
+        cin>>v1;cin>>v2;
+        g.addedges(v1, v2);
+    }
+    g.cycle_detection();
+    return 0;
+}
