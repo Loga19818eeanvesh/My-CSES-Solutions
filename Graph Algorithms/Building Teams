@@ -1,0 +1,86 @@
+//
+//  main.cpp
+//  buildingteams
+//
+//  Created by Logas81855anvesh on 05/02/21.
+//
+ 
+#include <iostream>
+#include <vector>
+using namespace std;
+class graph{
+private:
+    vector<int> v;
+    vector<vector<int>> e;
+public:
+    void add_vertices(int i){
+        v.push_back(i);
+    }
+    void initialise(){
+        e.resize(v.size());
+    }
+    void addedges(int u1,int u2){
+        e[u1-1].push_back(u2-1);
+        e[u2-1].push_back(u1-1);
+    }
+    bool makeset(int i,char* c,char* s){
+        int flag=0;
+        bool r=true;
+        for(int j=0;j<e[i].size();j++){
+            if(c[e[i][j]]=='w'){
+                c[e[i][j]]='g';
+                if(s[i]=='1'){s[e[i][j]]='2';}
+                else if(s[i]=='2'){s[e[i][j]]='1';}
+                r=makeset(e[i][j], c, s);
+            }
+            else if(c[e[i][j]]=='g'){
+                if(s[i]=='1' && s[e[i][j]]=='1'){flag=1;}
+                if(s[i]=='2' && s[e[i][j]]=='2'){flag=1;}
+            }
+            if(flag==1 || r==false){return(false);}
+        }
+        return(true);
+    }
+    void set(){
+        char c[v.size()];
+        char s[v.size()];
+        for(int i=0;i<v.size();i++){
+            c[i]='w';
+            s[i]='0';
+        }
+        for(int i=0;i<v.size();i++){
+            if(c[i]=='w'){
+                c[i]='g';
+                s[i]='1';
+                bool r=makeset(i, c, s);
+                if(r==false){
+                    cout<<"IMPOSSIBLE"<<endl;
+                    return;
+                }
+            }
+        }
+        for(int i=0;i<v.size();i++){
+            cout<<s[i]<<" ";
+        }
+        cout<<endl;
+    }
+};
+int main( ) {
+    int n;
+    int m;
+    cin>>n;
+    cin>>m;
+    graph g;
+    for(int i=1;i<=n;i++){
+        g.add_vertices(i);
+    }
+    g.initialise();
+    int u1;
+    int u2;
+    for(int i=0;i<m;i++){
+        cin>>u1;cin>>u2;
+        g.addedges(u1, u2);
+    }
+    g.set();
+    return 0;
+}
