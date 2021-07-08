@@ -1,0 +1,41 @@
+//
+//  main.cpp
+//  Exponentiation II
+//
+//  Created by Logas81855anvesh on 13/04/21.
+//
+ 
+#include <iostream>
+ 
+using namespace std;
+int modpow(int x,int n,int q){
+    if(n==0){return 1%q;}
+    if(n==1){return x%q;}
+    long long int y=modpow(x, n/2, q);
+    y=(y*y)%q;
+    if(n%2==1){
+        y=(y*x)%q;
+    }
+    return y;
+}
+int main( ) {
+    int n;
+    cin>>n;
+    int q=1e9+7;
+    int q2=q-1;
+    int r[n];
+    for(int i=0;i<n;i++){
+        int a;
+        int b;
+        int c;
+        cin>>a;
+        cin>>b;
+        cin>>c;
+        int p=modpow(b, c, q2);
+        r[i]=modpow(a, p, q);
+    }
+    for(int i=0;i<n;i++){
+        cout<<r[i]<<"\n";
+    }
+    return 0;
+}
