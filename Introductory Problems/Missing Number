@@ -1,0 +1,30 @@
+//
+//  main.cpp
+//  Missing Number
+//
+//  Created by Loga19818eeanvesh on 29/03/21.
+//
+ 
+#include <iostream>
+ 
+using namespace std;
+ 
+int main( ) {cout<<endl;
+    int n;
+    cin>>n;
+    int a[n-1];
+    int b[n];
+    for(int i=1;i<n;i++){
+        b[i-1]=0;
+        cin>>a[i-1];
+    }
+    b[n-1]=0;
+    for(int i=1;i<n;i++){
+        b[a[i-1]-1]=1;
+    }
+    for(int i=0;i<n;i++){
+        if(b[i]==0){cout<<i+1<<endl;break;}
+    }
+    
+    return 0;
+}
