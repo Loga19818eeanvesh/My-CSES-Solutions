@@ -1,0 +1,56 @@
+//
+//  main.cpp
+//  diameter of tree
+//
+//  Created by Logas81855anvesh on 20/02/21.
+//
+ 
+#include <iostream>
+#include <vector>
+using namespace std;
+struct node{
+    int v;
+    int d;
+};
+vector<vector<int>> e;
+void visit(char*c,int v,int* d){
+    for(int i=0;i<e[v].size();i++){
+        if(c[e[v][i]]=='w'){
+            c[e[v][i]]='g';
+            d[e[v][i]]=d[v]+1;
+            visit(c, e[v][i], d);
+        }
+    }
+        }
+ 
+node dfs(int n,int v){
+    char c[n];int d[n];
+    for(int i=0;i<n;i++){c[i]='w';d[i]=-1;}
+    c[v]='g';
+    d[v]=0;
+    visit(c,v,d);
+    int u;
+    int d1=0;
+    for(int i=0;i<n;i++){
+        if(d[i]>=d1){d1=d[i];u=i;}
+    }
+    node r={u,d1};
+    return r;
+}
+int main( ) {cout<<endl;
+    int n;
+    cin>>n;
+    e.resize(n);
+    int a;
+    int b;
+    for(int i=0;i<n-1;i++){
+        cin>>a;
+        cin>>b;
+        e[a-1].push_back(b-1);
+        e[b-1].push_back(a-1);
+    }
+    node n1=dfs(n, 0);
+    node n2=dfs(n, n1.v);
+    cout<<n2.d<<endl;
+    return 0;
+    }
