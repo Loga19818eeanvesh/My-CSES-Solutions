@@ -1,0 +1,42 @@
+//
+//  main.cpp
+//  Factory Machines
+//
+//  Created by Logas81855anvesh on 03/04/21.
+//
+ 
+#include <iostream>
+ 
+using namespace std;
+ 
+int main(){
+    int n;
+    long long int p;
+    cin>>n;
+    cin>>p;
+    long long int t[n];
+    for(int i=0;i<n;i++){
+        cin>>t[i];
+    }
+    long long int time;
+    long long int p1=0;
+    long long int l=0;
+    long long int h=1e18;  //1000000000000000000
+    long long int mid;
+    while(l<=h){
+        p1=0;
+        mid=(l+h)/2;
+    for(int i=0;i<n;i++){
+        p1=p1+(mid/t[i]);
+        if(p1>p){break;}
+    }
+    if(p1>=p){
+        time=mid;
+        h=mid-1;
+    }
+    else if(p1<p){
+        l=mid+1;
+    }
+    }
+    cout<<time<<"\n";
+}
