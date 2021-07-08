@@ -1,0 +1,132 @@
+//
+//  main.cpp
+//  messageroute
+//
+//  Created by Logas81855anvesh on 05/02/21.
+//
+ 
+#include <iostream>
+#include <vector>
+using namespace std;
+struct node{
+    node* pre;
+    int u;
+    node* next;
+};
+class queue{
+private:
+    node* head;
+    node* tail;
+public:
+    queue():head(nullptr),tail(nullptr){}
+    void enqueue(int i){
+        node* temp=new node;
+        temp->u=i;
+        temp->pre=nullptr;
+        temp->next=nullptr;
+        if(head==nullptr && tail==nullptr){
+            head=temp;tail=temp;
+        }
+        else{
+            head->pre=temp;
+            temp->next=head;
+            head=temp;
+        }
+    }
+    int dequeue(){
+        if(head==nullptr && tail==nullptr){return(-1);}
+        int r;
+        node *t;
+        if(head==tail){
+            r=tail->u;
+            t=tail;
+            head=nullptr;
+            tail=nullptr;
+        }
+        else{
+            r=tail->u;
+            t=tail;
+            tail=tail->pre;
+            tail->next=nullptr;
+        }
+        delete t;
+        return(r);
+    }
+    bool is_empty(){
+        if(head==nullptr && tail==nullptr){return(true);}
+        else{return(false);}
+    }
+};
+class graph{
+private:
+    vector<int> v;
+    vector<vector<int>> e;
+public:
+    void add_vertices(int i){
+        v.push_back(i);
+    }
+    void initialise(){
+        e.resize(v.size());
+    }
+    void add_edges(int u,int v){
+        e[u-1].push_back(v-1);
+    }
+    void print_path(int a,int b,int* p){
+        if(a==b){return;}
+        print_path(a, p[b]-1, p);
+        cout<<p[b]<<" ";
+    }
+    void bfs(int a,int b){
+        char c[v.size()];
+        int d[v.size()];
+        int p[v.size()];
+        for(int i=0;i<v.size();i++){
+            c[i]='w';
+            d[i]=-1;
+            p[i]=-1;
+        }
+        c[a-1]='g';
+        p[a-1]=a;
+        d[a-1]=1;
+        queue q;
+        q.enqueue(a-1);
+        while(!q.is_empty()){
+            int n=q.dequeue();
+            for(int i=0;i<e[n].size();i++){
+                if(c[e[n][i]]=='w'){
+                    c[e[n][i]]='g';
+                    d[e[n][i]]=d[n]+1;
+                    p[e[n][i]]=v[n];
+                    q.enqueue(e[n][i]);
+                }
+            }
+        }
+        if(d[b-1]==-1){cout<<"IMPOSSIBLE"<<endl;}
+        else{
+            cout<<d[b-1]<<endl;
+            print_path(a-1,b-1,p);
+            cout<<b<<endl;
+        }
+    }
+};
+int main( ) {
+    int computers;
+    int routes;
+    cin>>computers;
+    cin>>routes;
+    graph g;
+    for(int i=1;i<=computers;i++){
+        g.add_vertices(i);
+    }
+    g.initialise();
+    int a=1;
+    int b=computers;
+    int i1,i2;
+    for(int i=0;i<routes;i++){
+        cin>>i1;cin>>i2;
+        g.add_edges(i1, i2);
+        g.add_edges(i2, i1);
+    }
+    g.bfs(a, b);
+    return 0;
+}
