@@ -1,0 +1,114 @@
+//
+//  main.cpp
+//  negative_cycle_detection_by_fordwarshall
+//
+//  Created by Logas81855anvesh on 09/02/21.
+//
+#include <iostream>
+#include <vector>
+using namespace std;
+struct node{
+    int v;
+    int w;
+};
+class graph{
+private:
+    vector<int> v;
+    vector<vector<node>> e;
+    vector<int> nc;
+public:
+    void addvertex(int i){
+        v.push_back(i);
+    }
+    void initialise(){
+        e.resize(v.size()+1);
+    }
+    void addedges(int a,int b,int c){
+        node n={b-1,c};
+        e[a-1].push_back(n);
+    }
+    void visit(int* p,int a,int* f){
+        if(f[p[a]]!=-1){
+            cout<<"YES"<<endl;
+            for(int i=nc.size()-1 ; i>=f[p[a]]; i--){
+                cout<<nc[i]+1<<" ";
+            }
+            cout<<nc[nc.size()-1]+1<<endl;
+            exit(0);
+        }
+        else{
+            nc.push_back(p[a]);
+            f[p[a]]=nc.size()-1;
+            visit(p, p[a], f);
+        }
+    }
+    void bellman_ford(){
+        int n1=v.size();
+        v.push_back(n1);
+        for(int i=0;i<n1;i++){
+            e[v.size()-1].push_back({i,0});
+        }
+        long long d[v.size()];
+        int p[v.size()];
+        for(int i=0;i<v.size();i++){
+            d[i]=1000000000000000;
+            p[i]=-1;
+        }
+        d[v.size()-1]=0;
+        for(int k=1;k<=v.size()-1;k++){
+            for(int i=v.size()-1;i>=0;i--){
+                for(int j=0;j<e[i].size();j++){
+                    if(d[i]+e[i][j].w<d[e[i][j].v]){
+                        p[e[i][j].v]=i;
+                        d[e[i][j].v]=d[i]+e[i][j].w;
+                    }
+                }
+            }
+        }
+        int flag=0;
+        int in;
+        for(int i=v.size()-1;i>=0;i--){
+            for(int j=0;j<e[i].size();j++){
+                if(d[i]+e[i][j].w<d[e[i][j].v]){
+                    p[e[i][j].v]=i;
+                    d[e[i][j].v]=d[i]+e[i][j].w;
+                    flag=1;
+                    in=e[i][j].v;
+                    break;
+                }
+            }
+                if(flag==1){break;}
+        }
+        if(flag==0){cout<<"NO"<<endl;return;}
+        else{
+            int f[v.size()];
+            for(int i=0;i<v.size();i++){
+                f[i]=-1;
+            }
+            nc.resize(0);
+            nc.push_back(in);
+            f[in]=0;
+            visit(p,in,f);
+        }
+    }
+};
+int main( ) {
+    int n;
+    int m;
+    cin>>n;
+    cin>>m;
+    graph g;
+    for(int i=1;i<=n;i++){
+        g.addvertex(i);
+    }
+    g.initialise();
+    int a,b,c;
+    for(int i=0;i<m;i++){
+        cin>>a;
+        cin>>b;
+        cin>>c;
+        g.addedges(a, b, c);
+    }
+    g.bellman_ford();
+    return 0;
+}
