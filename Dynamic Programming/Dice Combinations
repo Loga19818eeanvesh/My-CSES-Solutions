@@ -1,0 +1,32 @@
+//
+//  main.cpp
+//  Dice Combinations
+//
+//  Created by Logas81855anvesh on 16/02/21.
+//
+ 
+#include <iostream>
+using namespace std;
+int dice(int n,int* d){
+    if(n<=0){return 1;}
+    if(d[n]!=-1){return d[n];}
+    int r1=0;
+    for(int i=1;i<=6;i++){
+        if(i<=n){
+            if(d[n-i]==-1){d[n-i]=dice(n-i, d)%1000000007;}
+            r1=r1+d[n-i];
+            r1=r1%1000000007;
+        }
+    }
+    return r1;
+}
+int main() {
+    int n;
+    cin>>n;
+    int d[n+1];
+    for(int i=0;i<=n;i++){
+        d[i]=-1;
+    }
+    cout<<dice(n, d)<<endl;
+    return 0;
+}
