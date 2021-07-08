@@ -1,0 +1,22 @@
+//
+//  main.cpp
+//  Bit Strings
+//
+//  Created by Logas81855anvesh on 30/03/21.
+//
+ 
+#include <iostream>
+ 
+using namespace std;
+ 
+int main( ) {cout<<endl;
+    int m=1000000007;
+    int n;
+    cin>>n;
+    int r=1;
+    for(int i=0;i<n;i++ ){
+        r=(r*2)%m;
+    }
+    cout<<r<<endl;
+    return 0;
+}
