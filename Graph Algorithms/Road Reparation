@@ -1,0 +1,153 @@
+//
+//  main.cpp
+//  road
+//
+//  Created by Logas81855anvesh on 13/02/21.
+//
+#include <iostream>
+#include <vector>
+using namespace std;
+struct node{
+    int v;
+    int w;
+};
+class min_priority_queue{
+private:
+    node* p;
+    int size;
+    int* f;
+public:
+    min_priority_queue(node* q,int s,int* m):p(q),size(s),f(m){
+    }
+    void min_heap_maintain(int i){
+        int minindex=i;
+        int l=(2*i)+1;
+        int r=(2*i)+2;
+        if(l<size && p[l].w<p[minindex].w){minindex=l;}
+        if(r<size && p[r].w<p[minindex].w){minindex=r;}
+        if(minindex!=i){
+            f[p[i].v]=minindex;
+            f[p[minindex].v]=i;
+            node temp=p[minindex];
+            p[minindex]=p[i];
+            p[i]=temp;
+            min_heap_maintain(minindex);
+        }
+    }
+    void min_heap_build(){
+        for(int i=size/2;i>=0;i--){
+            min_heap_maintain(i);
+        }
+    }
+    node extract_min(){
+        if(size<=0){return{-1,-1};}
+        node r=p[0];
+        f[p[0].v]=-1;
+        p[0]=p[size-1];
+        f[p[0].v]=0;
+        size--;
+        min_heap_maintain(0);
+        return r;
+    }
+    bool is_empty(){
+        if(size<=0){return true;}
+        else{return false;}
+    }
+    void decrease_key(int i,int d){
+        if(f[i]!=-1){
+        p[f[i]].w=d;
+        int c=f[i];
+        int pp=(c-1)/2;
+        while(pp>=0 && p[c].w<p[pp].w){
+            f[p[c].v]=pp;
+            f[p[pp].v]=c;
+            node temp=p[c];
+            p[c]=p[pp];
+            p[pp]=temp;
+            c=pp;
+            pp=(c-1)/2;
+        }
+        }
+    }
+    bool is_present(int u){
+        if(f[u]!=-1){return(true);}
+        else{return(false);}
+    }
+};
+ 
+class graph{
+private:
+    vector<int> v;
+    vector<vector<node>> e;
+public:
+    void addvertex(int i){
+        v.push_back(i);
+    }
+    void initialise(){
+        e.resize(v.size());
+    }
+    void addedges(int a,int b,int c){
+        node n1={b-1,c};
+        e[a-1].push_back(n1);
+        node n2={a-1,c};
+        e[b-1].push_back(n2);
+    }
+    void prim(){
+        long long r=0;
+        int d[v.size()];
+        node p[v.size()];
+        int m[v.size()];
+        for(int i=0;i<v.size();i++){
+            d[i]=2147483647;
+            p[i].v=i;
+            p[i].w=2147483647;
+            m[i]=i;
+        }
+        d[0]=0;
+        p[0].w=0;
+        min_priority_queue q(p,v.size(),m);
+        q.min_heap_build();
+        while(!q.is_empty()){
+            node n=q.extract_min();
+            int in=n.v;
+            for(int j=0;j<e[in].size();j++){
+                if(e[in][j].w<d[e[in][j].v]){
+                    if(q.is_present(e[in][j].v)){
+                    d[e[in][j].v]=e[in][j].w;
+                    q.decrease_key(e[in][j].v,e[in][j].w);
+                }
+                }
+            }
+        }
+        int flag=0;
+        for(int i=0;i<v.size();i++){
+            if(d[i]==2147483647){flag=1;break;}
+            else{r=r+d[i];}
+        }
+        if(flag==1){cout<<"IMPOSSIBLE"<<endl;}
+        else{cout<<r<<endl;}
+    }
+};
+ 
+int main() {
+    int n;
+    int m;
+    cin>>n;
+    cin>>m;
+    graph g;
+    for(int i=1;i<=n;i++){
+        g.addvertex(i);
+    }
+    g.initialise();
+    int a;
+    int b;
+    int c;
+    for(int i=0;i<m;i++){
+        cin>>a;
+        cin>>b;
+        cin>>c;
+        g.addedges(a, b, c);
+    }
+    g.prim();
+    return 0;
+}
