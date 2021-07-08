@@ -1,0 +1,65 @@
+//
+//  main.cpp
+//  Palindrome Reorder
+//
+//  Created by Logas81855anvesh on 30/03/21.
+//
+ 
+#include <iostream>
+#include <string>
+using namespace std;
+ 
+int main( ) {cout<<endl;
+    string r;
+    string s;
+    cin>>s;
+    int n=s.length();
+    int no[26];
+    for(int i=0;i<26;i++){no[i]=0;}
+    int a=static_cast<int>('A');
+    for(int i=0;i<n;i++){
+        no[static_cast<int>(s[i])-a]++;
+    }
+    int odd=0;
+    int oddindex;
+    for(int i=0;i<26;i++){
+        if(no[i]%2==1){odd++;oddindex=i;}
+    }
+    if(odd>1){r="NO SOLUTION";}
+    else if(odd==1 && n%2==0){r="NO SOLUTION";}
+    else if(odd==0 && n%2==1){r="NO SOLUTION";}
+    else if(odd==1 && n%2==1){
+        s[(n/2)+1-1]=static_cast<char>(a+oddindex);
+        no[oddindex]--;
+        int t=1;
+        int m=n/2+1;
+        for(int i=0;i<26;i++){
+            if(no[i]!=0){
+                while(no[i]!=0){
+                    s[m+t-1]=static_cast<char>(a+i);
+                    s[m-t-1]=static_cast<char>(a+i);
+                    no[i]=no[i]-2;
+                    t++;
+                }
+            }
+        }
+        r=s;
+    }
+    else if(odd==0 && n%2==0){
+        int t=1;
+        int m=n/2;
+        for(int i=0;i<26;i++){
+            if(no[i]!=0){
+                while(no[i]!=0){
+                    s[m+t-1]=static_cast<char>(a+i);
+                    s[m-t+1-1]=static_cast<char>(a+i);
+                    no[i]=no[i]-2;
+                    t++;
+                }
+            }
+        }
+        r=s;
+    }
+    cout<<r<<endl;
+    return 0;
+}
