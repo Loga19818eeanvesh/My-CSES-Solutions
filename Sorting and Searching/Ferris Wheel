@@ -1,0 +1,62 @@
+//
+//  main.cpp
+//  Ferris Wheel
+//
+//  Created by Logas81855anvesh on 01/04/21.
+//
+ 
+#include <iostream>
+ 
+using namespace std;
+ 
+void merge(int *p,int a,int c,int b){
+    int l1=c-a+1;
+    int r1=b-c;
+    int l[l1+1];
+    int r[r1+1];
+    l[l1]=1000000001;
+    r[r1]=1000000001;
+    for(int i=0;i<l1;i++){
+        l[i]=p[a+i];
+    }
+    for(int i=0;i<r1;i++){
+        r[i]=p[c+1+i];
+    }
+    int li=0;
+    int ri=0;
+    for(int i=a;i<=b;i++){
+        if(l[li]<=r[ri]){p[i]=l[li];li++;}
+        else{p[i]=r[ri];ri++;}
+    }
+}
+ 
+void merge_sort(int* p,int a,int b){
+    if(a<b){
+        int c=(a+b)/2;
+        merge_sort(p, a, c);
+        merge_sort(p, c+1, b);
+        merge(p,a,c,b);
+    }
+}
+ 
+int main( ) {
+    int n;
+    int x;
+    cin>>n;
+    cin>>x;
+    int w[n];
+    for(int i=0;i<n;i++){
+        cin>>w[i];
+    }
+    merge_sort(w, 0, n-1);
+    int s=0;
+    int e=n-1;
+    int r=0;
+    while(e>=s){
+        if(e==s){r++;s++;e--;}
+        else if(w[e]+w[s]<=x){r++;e--;s++;}
+        else {r++;e--;}
+    }
+    cout<<r<<endl;
+    return 0;
+}
