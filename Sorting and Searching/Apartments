@@ -1,0 +1,68 @@
+//
+//  main.cpp
+//  Apartments
+//
+//  Created by Logas81855anvesh on 31/03/21.
+//
+ 
+#include <iostream>
+ 
+using namespace std;
+ 
+void merge(int* p,int a,int c,int b){
+    int l1=c-a+1;
+    int r1=b-c;
+    int l[l1+1];
+    int r[r1+1];
+    l[l1]=1000000001;
+    r[r1]=1000000001;
+    for(int i=0;i<l1;i++){
+        l[i]=p[a+i];
+    }
+    for(int i=0;i<r1;i++){
+        r[i]=p[c+1+i];
+    }
+    int li=0;
+    int ri=0;
+    for(int i=a;i<=b;i++){
+        if(l[li]<=r[ri]){p[i]=l[li];li++;}
+        else{p[i]=r[ri];ri++;}
+    }
+}
+ 
+void merge_sort(int* p,int a,int b){
+    if(a<b){
+        int c=(a+b)/2;
+        merge_sort(p, a, c);
+        merge_sort(p, c+1, b);
+        merge(p,a,c,b);
+    }
+}
+ 
+int main( ) {
+    int noof_applicants;
+    int noof_apartments;
+    int max_allowed_diff;
+    cin>>noof_applicants;
+    cin>>noof_apartments;
+    cin>>max_allowed_diff;
+    int desired_size[noof_applicants];
+    for(int i=0;i<noof_applicants;i++){cin>>desired_size[i];}
+    int actual_size[noof_apartments];
+    for(int i=0;i<noof_apartments;i++){cin>>actual_size[i];}
+    merge_sort(desired_size, 0, noof_applicants-1);
+    merge_sort(actual_size, 0, noof_apartments-1);
+    int t=0;
+    int r=0;
+    for(int i=0;i<noof_applicants;i++){
+        while(actual_size[t]<desired_size[i]-max_allowed_diff){t++;}
+        if(actual_size[t]<=desired_size[i]+max_allowed_diff && actual_size[t]>=desired_size[i]-max_allowed_diff){
+            r++;
+            t++;
+        }
+        if(t==noof_apartments){break;}
+    }
+    cout<<r<<endl;
+    
+    return 0;
+}
