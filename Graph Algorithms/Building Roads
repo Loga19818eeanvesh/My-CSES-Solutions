@@ -1,0 +1,81 @@
+//
+//  main.cpp
+//  buildingroads
+//
+//  Created by Logas81855anvesh on 05/02/21.
+//
+ 
+#include <iostream>
+#include <vector>
+using namespace std;
+struct node{
+    int a;
+    int b;
+};
+class graph{
+private:
+    vector<int> c;
+    vector<vector<int>> r;
+public:
+    void add_vertices(int n){
+        c.push_back(n);
+    }
+    void initialise(){
+        r.resize(c.size());
+    }
+    int index(int a){
+        return(a-1);
+    }
+    void add_edges(int a,int b){
+        r[index(a)].push_back(index(b));
+    }
+    void dfs_visit(int i,char* c1){
+        for(int j=0;j<r[i].size();j++){
+            if(c1[r[i][j]]=='w'){
+                c1[r[i][j]]='g';
+                dfs_visit(r[i][j], c1);
+            }
+        }
+    }
+    void dfs(){
+        int n=0;
+        vector <int>v;
+        char c1[c.size()];
+        for(int i=0;i<c.size();i++){
+            c1[i]='w';
+        }
+        for(int i=0;i<c.size();i++){
+            if(c1[i]=='w'){
+                n++;
+                v.push_back(c[i]);
+                dfs_visit(i,c1);
+            }
+        }
+        cout<<n-1<<endl;
+        for(int i=1;i<v.size();i++){
+            cout<<v[i-1]<<"  "<<v[i]<<endl;
+        }
+    }
+};
+int main( ) {
+    graph g;
+    int cities;
+    int roads;
+    cin>>cities;
+    cin>>roads;
+    for(int i=1;i<=cities;i++){
+        g.add_vertices(i);
+    }
+    g.initialise();
+    node n[roads];
+    int t1;
+    int t2;
+    for(int i=0;i<roads;i++){
+        cin>>t1;cin>>t2;
+        n[i]={t1,t1};
+        g.add_edges(t1, t2);
+        g.add_edges(t2, t1);
+    }
+    g.dfs();
+    return 0;
+}
