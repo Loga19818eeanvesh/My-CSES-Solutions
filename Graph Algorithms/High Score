@@ -1,0 +1,197 @@
+//
+//  main.cpp
+//  tunnelhighscore
+//
+//  Created by Logas81855anvesh on 10/02/21.
+//
+ 
+#include <iostream>
+#include <vector>
+using namespace std;
+struct node{
+    int v;
+    int w;
+};
+struct node2 {
+    node2* pre;
+    int i;
+    node2* next;
+};
+class queue{
+private:
+    node2* head;
+    node2* tail;
+public:
+    queue():head(nullptr),tail(nullptr){}
+    void enqueue(int i){
+        node2* temp=new node2;
+        temp->i=i;
+        temp->pre=nullptr;
+        temp->next=nullptr;
+        if(head==nullptr && tail==nullptr){
+            head=temp;
+            tail=temp;
+        }
+        else{
+            head->pre=temp;
+            temp->next=head;
+            head=temp;
+        }
+    }
+    int dequeue(){
+        int r=tail->i;
+        node2* t=tail;
+        if(head==tail){
+            head=nullptr;
+            tail=nullptr;
+        }
+        else{
+            tail=tail->pre;
+            tail->next=nullptr;
+        }
+        delete t;
+        return r;
+    }
+    bool is_empty(){
+        if(head==nullptr && tail==nullptr){return true;}
+        else{return false;}
+    }
+};
+class graph{
+private:
+    vector<int> v;
+    vector<vector<node>> e;
+    vector<int> nct;
+    vector<int> nc;
+public:
+    void addvertex(int i){
+        v.push_back(i);
+    }
+    void initialise(){
+        e.resize(v.size());
+    }
+    void addedges(int a,int b,int c){
+        node n={b-1,c};
+        e[a-1].push_back(n);
+    }
+    void bfs(int s){
+        char c[v.size()];
+        int p[v.size()];
+        char c0[v.size()];
+        int p0[v.size()];
+        for(int i=0;i<v.size();i++){
+            c[i]='w';
+            p[i]=-1;
+            c0[i]='w';
+            p0[i]=-1;
+        }
+        p0[0]=0;
+        p[s]=s;
+        c0[0]='g';
+        c[s]='g';
+        queue q0;
+        q0.enqueue(0);
+        queue q;
+        q.enqueue(s);
+        while(!q.is_empty()){
+            int ni=q.dequeue();
+            for(int j=0;j<e[ni].size();j++ ){
+                if(c[e[ni][j].v]=='w'){
+                    c[e[ni][j].v]='g';
+                    p[e[ni][j].v]=ni;
+                    q.enqueue(e[ni][j].v);
+                }
+            }
+        }
+        while(!q0.is_empty()){
+            int ni=q0.dequeue();
+            for(int j=0;j<e[ni].size();j++ ){
+                if(c0[e[ni][j].v]=='w'){
+                    c0[e[ni][j].v]='g';
+                    p0[e[ni][j].v]=ni;
+                    q0.enqueue(e[ni][j].v);
+                }
+            }
+        }
+        if(p[v.size()-1]!=-1 && p0[s]!=-1){
+            cout<<"-1"<<endl;
+            exit(0);
+        }
+    }
+    void visit(int* p,int a,int* f){
+        if(f[p[a]]!=-1){
+            for(int i=nct.size()-1;i>=f[p[a]];i--){
+                nc.push_back(nct[i]);
+            }
+            bfs(nc[0]);
+            return;
+        }
+        nct.push_back(p[a]);
+        f[p[a]]=nct.size()-1;
+        visit(p, p[a],f);
+    }
+    void bellman_ford(){
+        long long d[v.size()];
+        int p[v.size()];
+        for(int i=0;i<v.size();i++){
+            d[i]=1000000000000000;
+            p[i]=-1;
+        }
+        d[0]=0;
+        for(int k=1;k<v.size();k++){
+            for(int i=0;i<v.size();i++){
+                for(int j=0;j<e[i].size();j++){
+                    if(d[i]+e[i][j].w < d[e[i][j].v]){
+                        d[e[i][j].v]=d[i]+e[i][j].w;
+                        p[e[i][j].v]=i;
+                    }
+                }
+            }
+        }
+        int flag=0;
+        vector<int> in;
+        for(int i=0;i<v.size();i++){
+            for(int j=0;j<e[i].size();j++){
+                if(d[i]+e[i][j].w < d[e[i][j].v]){
+                    d[e[i][j].v]=d[i]+e[i][j].w;
+                    p[e[i][j].v]=i;
+                    flag=1;
+                    in.push_back(e[i][j].v);
+                }
+            }
+        }
+        if(flag==1){
+            int f[v.size()];
+            for(int i=0;i<v.size();i++){
+                f[i]=-1;
+            }
+            int ni=in[0];
+            f[ni]=0;
+            nct.push_back(ni);
+            visit(p, ni,f);
+        }
+        cout<<-d[v.size()-1]<<endl;
+    }
+};
+int main( ) {
+    int n;
+    int m;
+    cin>>n;
+    cin>>m;
+    graph g;
+    for(int i=1;i<=n;i++){
+        g.addvertex(i);
+    }
+    g.initialise();
+    int a;
+    int b;
+    int c;
+    for(int i=0;i<m;i++){
+        cin>>a;
+        cin>>b;
+        cin>>c;
+        g.addedges(a, b, -c);
+    }
+    g.bellman_ford();
+    return 0;
+}
