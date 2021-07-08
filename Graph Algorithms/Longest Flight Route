@@ -1,0 +1,110 @@
+//
+//  main.cpp
+//  longestflightroute
+//
+//  Created by Logas81855anvesh on 11/02/21.
+//
+ 
+#include <iostream>
+#include <vector>
+using namespace std;
+struct node{
+    int v;
+    int w;
+};
+class graph{
+private:
+    vector<int> v;
+    vector<vector<node>> e;
+    vector<int> t;
+    vector<int> f;
+public:
+    void addvertex(int i){
+        v.push_back(i);
+    }
+    void initialise(){
+        e.resize(v.size());
+    }
+    void addedges(int a,int b){
+        node n={b-1,-1};
+        e[a-1].push_back(n);
+    }
+    void dfs_visit(char* c,int i){
+        for(int j=0;j<e[i].size();j++){
+            if(c[e[i][j].v]=='w'){
+                c[e[i][j].v]='g';
+                dfs_visit(c, e[i][j].v);
+            }
+        }
+        t.push_back(i);
+    }
+    void topological_sort(){
+        char c[v.size()];
+        for(int i=0;i<v.size();i++){
+            c[i]='w';
+        }
+        for(int i=0;i<v.size();i++){
+            if(c[i]=='w'){
+                c[i]='g';
+                dfs_visit(c,i);
+            }
+        }
+    }
+    void visit(int*p,int a,int b){
+        if(a==b){return;}
+        visit(p, a, p[b]);
+        f.push_back(p[b]);
+    }
+    void long_route(){
+        int d[v.size()];
+        int p[v.size()];
+        for(int i=0;i<v.size();i++){
+            d[i]=2147483647;
+            p[i]=-1;
+        }
+        d[0]=-1;
+        topological_sort();
+        for(int i=v.size()-1;i>=0;i--){
+            int in=t[i];
+            for(int j=0;j<e[in].size();j++){
+                if(d[in]+e[in][j].w < d[e[in][j].v]){
+                    d[e[in][j].v]=d[in]+e[in][j].w;
+                    p[e[in][j].v]=in;
+                }
+            }
+        }
+        if(d[v.size()-1]>1000000){
+            cout<<"IMPOSSIBLE"<<endl;
+            return;
+        }
+        else{
+            cout<<-d[v.size()-1]<<endl;
+            visit(p,0,v.size()-1);
+            f.push_back(v.size()-1);
+            for(int i=0;i<f.size();i++){
+                cout<<f[i]+1<<" ";
+            }
+            cout<<endl;
+        }
+    }
+};
+int main( ) {
+    int n;
+    int m;
+    cin>>n;
+    cin>>m;
+    graph g;
+    for(int i=1;i<=n;i++){
+        g.addvertex(i);
+    }
+    g.initialise();
+    int a;
+    int b;
+    for(int i=0;i<m;i++){
+        cin>>a;
+        cin>>b;
+        g.addedges(a, b);
+    }
+    g.long_route();
+    return 0;
+}
