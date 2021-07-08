@@ -1,0 +1,59 @@
+//
+//  main.cpp
+//  Stick Lengths
+//
+//  Created by Logas81855anvesh on 01/04/21.
+//
+ 
+#include <iostream>
+ 
+using namespace std;
+ 
+void merge(long long int* p,int a,int c,int b){
+    int l1=c-a+1;
+    int r1=b-c;
+    long long int l[l1+1];
+    long long int r[r1+1];
+    l[l1]=1000000001;
+    r[r1]=1000000001;
+    for(int i=0;i<l1;i++){
+        l[i]=p[a+i];
+    }
+    for(int i=0;i<r1;i++){
+        r[i]=p[c+1+i];
+    }
+    int li=0;
+    int ri=0;
+    for(int i=a;i<=b;i++){
+        if(l[li]<=r[ri]){p[i]=l[li];li++;}
+        else{p[i]=r[ri];ri++;}
+    }
+}
+void merge_sort(long long int* p,int a,int b){
+    if(a<b){
+        int c=(a+b)/2;
+        merge_sort(p, a, c);
+        merge_sort(p, c+1, b);
+        merge(p,a,c,b);
+    }
+}
+int main( ) {
+    int n;
+    cin>>n;
+    long long int l[n];
+    for(int i=0;i<n;i++){cin>>l[i];}
+    merge_sort(l, 0, n-1);
+    int m;
+    if(n%2==0){m=n/2;}
+    else{m=(n+1)/2;}
+    long long int l1=l[m-1];
+    long long int c=0;
+    for(int i=0;i<m-1;i++){
+        c=c+(l1-l[i]);
+    }
+    for(int i=m;i<n;i++){
+        c=c+(l[i]-l1);
+    }
+    cout<<c<<endl;
+    return 0;
+}
