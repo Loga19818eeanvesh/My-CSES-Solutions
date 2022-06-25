@@ -1,9 +1,4 @@
-//
-//  main.cpp
-//  edit_distance
-//
-//  Created by Logas81855anvesh on 17/02/21.
-//
+
  
 #include <iostream>
 #include <string>
