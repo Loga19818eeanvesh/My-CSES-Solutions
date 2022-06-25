@@ -1,9 +1,4 @@
-//
-//  main.cpp
-//  Palindrome Reorder
-//
-//  Created by Logas81855anvesh on 30/03/21.
-//
+
  
 #include <iostream>
 #include <string>
